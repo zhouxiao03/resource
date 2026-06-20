@@ -1,0 +1,1098 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>听见中国 - 跟着中文歌去旅行 | HSK4 文化探索之旅</title>
+    <style>
+        /* ============ CSS 变量 & 全局 ============ */
+        :root {
+            --red:       #C93636;
+            --red-light: #fdf0f0;
+            --green:     #2E8B57;
+            --green-light:#eef7f1;
+            --blue:      #4682B4;
+            --blue-light:#eef4f9;
+            --teal:      #008B8B;
+            --teal-light:#e8f5f5;
+            --purple:    #7B4BB3;
+            --purple-light:#f4eff9;
+            --bg:        #fafafa;
+            --card-bg:   #ffffff;
+            --text:      #2c2c2c;
+            --muted:     #777;
+            --radius:    14px;
+            --shadow:    0 4px 20px rgba(0,0,0,0.06);
+            --shadow-hover: 0 12px 32px rgba(0,0,0,0.12);
+        }
+        * { margin:0; padding:0; box-sizing:border-box; }
+        html { scroll-behavior:smooth; }
+        body {
+            font-family: "PingFang SC", "Microsoft YaHei", "Noto Sans SC", system-ui, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.7;
+        }
+
+        /* ============ 导航栏 ============ */
+        .nav {
+            display:flex; justify-content:space-between; align-items:center;
+            padding:16px 48px; background:rgba(255,255,255,0.92);
+            backdrop-filter:blur(12px); -webkit-backdrop-filter:blur(12px);
+            position:sticky; top:0; z-index:200;
+            box-shadow:0 1px 8px rgba(0,0,0,0.06);
+        }
+        .nav .logo { font-size:22px; font-weight:700; color:var(--red); letter-spacing:1px; }
+        .nav-links { display:flex; gap:24px; }
+        .nav-links a {
+            text-decoration:none; color:#555; font-weight:500; font-size:15px;
+            cursor:pointer; transition:color 0.25s; position:relative;
+        }
+        .nav-links a:hover { color:var(--red); }
+        .nav-links a::after {
+            content:''; position:absolute; bottom:-4px; left:0; width:0; height:2px;
+            background:var(--red); transition:width 0.3s;
+        }
+        .nav-links a:hover::after { width:100%; }
+
+        /* ============ Hero ============ */
+        .hero {
+            min-height:65vh; display:flex; flex-direction:column;
+            justify-content:center; align-items:center; text-align:center;
+            background: linear-gradient(135deg, rgba(0,0,0,0.45) 0%, rgba(0,0,0,0.25) 60%, rgba(0,0,0,0.45) 100%),
+                        url('https://images.unsplash.com/photo-1508804185872-d7badad00f7d?q=80&w=2070&auto=format&fit=crop');
+            background-size:cover; background-position:center; color:#fff;
+            padding:40px 20px;
+        }
+        .hero h1 { font-size:clamp(32px, 5.5vw, 56px); margin-bottom:16px; text-shadow:0 3px 8px rgba(0,0,0,0.5); letter-spacing:4px; }
+        .hero .subtitle { font-size:clamp(15px, 2vw, 20px); margin-bottom:12px; opacity:0.92; }
+        .hero .badge-row { display:flex; gap:16px; flex-wrap:wrap; justify-content:center; margin-bottom:32px; }
+        .hero .badge {
+            background:rgba(255,255,255,0.18); backdrop-filter:blur(6px);
+            padding:6px 18px; border-radius:20px; font-size:14px;
+            border:1px solid rgba(255,255,255,0.3);
+        }
+        .btn-hero {
+            padding:14px 40px; background:var(--red); color:#fff; border:none;
+            border-radius:30px; font-size:18px; font-weight:600; cursor:pointer;
+            transition:all 0.3s; letter-spacing:1px;
+            box-shadow:0 4px 16px rgba(201,54,54,0.4);
+        }
+        .btn-hero:hover { transform:translateY(-3px); box-shadow:0 8px 28px rgba(201,54,54,0.55); }
+
+        /* ============ 通用区块 ============ */
+        .section { padding:80px 24px; }
+        .section-header { text-align:center; margin-bottom:48px; }
+        .section-header h2 { font-size:clamp(26px, 3.2vw, 36px); margin-bottom:8px; }
+        .section-header .tag {
+            display:inline-block; background:#e8e8e8; padding:4px 16px;
+            border-radius:20px; font-size:13px; color:var(--muted); letter-spacing:1px;
+        }
+
+        /* ============ 地图卡片 ============ */
+        .cards-grid {
+            display:grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap:24px; max-width:1100px; margin:0 auto;
+        }
+        .city-card {
+            background:var(--card-bg); border-radius:var(--radius);
+            padding:36px 24px 28px; text-align:center; cursor:pointer;
+            transition:all 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            box-shadow:var(--shadow); border:1.5px solid transparent;
+            position:relative; overflow:hidden;
+        }
+        .city-card::before {
+            content:''; position:absolute; top:0; left:0; right:0; height:4px;
+        }
+        .city-card:hover {
+            transform:translateY(-10px); box-shadow:var(--shadow-hover);
+        }
+        .city-card.card--bj { border-top:4px solid var(--red); }
+        .city-card.card--bj:hover { border-color:var(--red); }
+        .city-card.card--cd { border-top:4px solid var(--green); }
+        .city-card.card--cd:hover { border-color:var(--green); }
+        .city-card.card--xm { border-top:4px solid var(--blue); }
+        .city-card.card--xm:hover { border-color:var(--blue); }
+        .city-card.card--yn { border-top:4px solid var(--teal); }
+        .city-card.card--yn:hover { border-color:var(--teal); }
+        .city-card.card--gr { border-top:4px solid var(--purple); }
+        .city-card.card--gr:hover { border-color:var(--purple); }
+
+        .card-icon { font-size:40px; margin-bottom:16px; }
+        .card-city { font-size:24px; font-weight:700; margin-bottom:8px; }
+        .card-song { font-size:16px; font-weight:600; color:var(--muted); margin-bottom:6px; }
+        .card-desc { font-size:14px; color:#999; }
+        .card-badge {
+            display:inline-block; margin-top:12px; padding:3px 10px;
+            border-radius:12px; font-size:12px; font-weight:500;
+        }
+        .card--bj .card-badge { background:var(--red-light); color:var(--red); }
+        .card--cd .card-badge { background:var(--green-light); color:var(--green); }
+        .card--xm .card-badge { background:var(--blue-light); color:var(--blue); }
+        .card--yn .card-badge { background:var(--teal-light); color:var(--teal); }
+        .card--gr .card-badge { background:var(--purple-light); color:var(--purple); }
+
+        /* ============ 详情内容区 ============ */
+        .content-section {
+            min-height:70vh; padding:80px 24px 100px;
+            display:flex; flex-direction:column; align-items:center;
+            opacity:0; transform:translateY(30px);
+            transition:all 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+        .content-visible { opacity:1; transform:translateY(0); }
+
+        .detail-box {
+            background:var(--card-bg); width:100%; max-width:860px;
+            padding:44px 48px; border-radius:var(--radius);
+            box-shadow:var(--shadow); position:relative;
+        }
+        .detail-box h3 {
+            font-size:20px; margin:28px 0 12px; padding-bottom:8px;
+            border-bottom:2px solid #f0f0f0;
+        }
+        .detail-box h3:first-child { margin-top:0; }
+
+        /* 章节主题色 */
+        #beijing  .section-header h2 { color:var(--red); }
+        #beijing  .detail-box { border-top:4px solid var(--red); }
+        #chengdu  .section-header h2 { color:var(--green); }
+        #chengdu  .detail-box { border-top:4px solid var(--green); }
+        #xiamen   .section-header h2 { color:var(--blue); }
+        #xiamen   .detail-box { border-top:4px solid var(--blue); }
+        #yunnan .section-header h2 { color:var(--teal); }
+        #yunnan .detail-box { border-top:4px solid var(--teal); }
+        #chengzhang .section-header h2 { color:var(--purple); }
+        #chengzhang .detail-box { border-top:4px solid var(--purple); }
+
+        /* 歌词框 */
+        .lyrics-box {
+            background:linear-gradient(135deg, #f8f8f8, #f0f0f0);
+            padding:28px 32px; border-left:5px solid var(--red);
+            margin:16px 0 20px; font-style:italic; color:#555;
+            border-radius:0 10px 10px 0; font-size:17px; line-height:2;
+            position:relative;
+        }
+        .lyrics-box::before {
+            content:'"'; position:absolute; top:8px; left:14px;
+            font-size:48px; color:#ddd; font-style:normal; font-weight:700;
+            line-height:1;
+        }
+
+        /* ============ 音视频播放器 ============ */
+        .audio-player {
+            background: linear-gradient(135deg, #fdf0f0, #fff5f5);
+            border: 1.5px solid #f0d0d0;
+            border-radius: var(--radius);
+            padding: 18px 24px;
+            margin: 20px 0;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+        .audio-player .audio-icon {
+            font-size: 36px;
+            flex-shrink: 0;
+        }
+        .audio-player audio {
+            flex: 1;
+            min-width: 240px;
+            height: 40px;
+            border-radius: 8px;
+        }
+        .audio-player .audio-label {
+            font-size: 13px;
+            color: var(--muted);
+            width: 100%;
+            margin-top: 4px;
+        }
+        .video-wrapper {
+            position: relative;
+            border-radius: var(--radius);
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            margin: 20px 0;
+            background: #000;
+        }
+        .video-wrapper video {
+            width: 100%;
+            display: block;
+            max-height: 480px;
+            object-fit: cover;
+        }
+        .video-wrapper .video-caption {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(transparent, rgba(0,0,0,0.7));
+            color: #fff;
+            padding: 24px 20px 14px;
+            font-size: 14px;
+            pointer-events: none;
+        }
+        .image-row {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+            margin: 20px 0;
+        }
+        .image-row .img-card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            transition: transform 0.3s, box-shadow 0.3s;
+            text-align: center;
+        }
+        .image-row .img-card:hover {
+            transform: translateY(-6px);
+            box-shadow: var(--shadow-hover);
+        }
+        .image-row .img-card img {
+            width: 100%;
+            height: 140px;
+            object-fit: cover;
+            display: block;
+        }
+        .image-row .img-card .img-label {
+            padding: 10px 8px;
+            font-size: 13px;
+            color: var(--muted);
+            font-weight: 500;
+        }
+        @media (max-width: 600px) {
+            .image-row { grid-template-columns: repeat(2, 1fr); }
+        }
+        #chengdu .lyrics-box  { border-left-color:var(--green); }
+        #xiamen .lyrics-box   { border-left-color:var(--blue); }
+        #yunnan .lyrics-box { border-left-color:var(--teal); }
+        #chengzhang .lyrics-box { border-left-color:var(--purple); }
+
+        .culture-note {
+            background:#fffaf0; border:1px solid #f0e0c0; padding:16px 20px;
+            border-radius:10px; margin:16px 0;
+        }
+        .culture-note strong { color:#c08030; }
+
+        /* 词汇表 */
+        .vocab-grid {
+            display:grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap:10px; margin:16px 0;
+        }
+        .vocab-item {
+            background:#f9f9f9; border:1px solid #e8e8e8; padding:10px 14px;
+            border-radius:8px; font-size:14px; transition:all 0.25s;
+            cursor:default;
+        }
+        .vocab-item:hover { background:#f0f0f0; border-color:#ccc; transform:translateY(-1px); }
+        .vocab-item .zh { font-weight:700; color:var(--text); }
+        .vocab-item .py { font-size:12px; color:var(--muted); display:block; }
+        .vocab-item .en { font-size:12px; color:#999; }
+        .vocab-item .level {
+            display:inline-block; font-size:10px; padding:1px 6px;
+            border-radius:8px; margin-left:4px; font-weight:600;
+        }
+        .level-hsk2 { background:#e8f5e9; color:#388e3c; }
+        .level-hsk3 { background:#fff3e0; color:#e65100; }
+        .level-hsk4 { background:#e3f2fd; color:#1565c0; }
+        .level-hsk5 { background:#fce4ec; color:#c62828; }
+
+        /* 语法卡片 */
+        .grammar-card {
+            background:#f4f6fb; border:1px solid #dde3f0;
+            padding:18px 22px; border-radius:10px; margin:12px 0;
+        }
+        .grammar-card .pattern {
+            font-weight:700; color:#3a5a9c; font-size:16px; margin-bottom:6px;
+        }
+        .grammar-card .meaning { font-size:14px; color:#666; margin-bottom:4px; }
+        .grammar-card .example { font-size:14px; color:var(--text); font-style:italic; }
+
+        /* 任务按钮 */
+        .task-callout {
+            display:flex; align-items:flex-start; gap:16px;
+            background:linear-gradient(135deg, #fafafa, #f5f5f5);
+            border:1.5px dashed #d0d0d0; border-radius:var(--radius);
+            padding:22px 26px; margin-top:32px; transition:all 0.3s;
+        }
+        .task-callout:hover { border-color:#aaa; background:#fff; }
+        .task-callout .task-emoji { font-size:32px; flex-shrink:0; }
+        .task-callout h4 { font-size:16px; margin-bottom:4px; }
+        .task-callout p { font-size:14px; color:var(--muted); }
+        .task-callout .steps { font-size:13px; color:#888; margin-top:6px; }
+
+        /* 回到顶部 */
+        .back-top {
+            display:block; text-align:center; margin-top:28px;
+            color:var(--muted); text-decoration:none; font-size:14px;
+            transition:color 0.3s;
+        }
+        .back-top:hover { color:var(--red); }
+
+        /* 底部 */
+        .footer {
+            text-align:center; padding:40px 20px; color:#aaa; font-size:13px;
+            border-top:1px solid #eee; margin-top:40px;
+        }
+        .footer strong { color:var(--muted); }
+
+        /* ============ 响应式 ============ */
+        @media (max-width:768px) {
+            .nav { padding:12px 20px; }
+            .nav-links { gap:12px; }
+            .hero { min-height:50vh; }
+            .detail-box { padding:28px 20px; }
+            .cards-grid { grid-template-columns:1fr 1fr; gap:16px; }
+            .vocab-grid { grid-template-columns:1fr 1fr; }
+        }
+        @media (max-width:480px) {
+            .cards-grid { grid-template-columns:1fr; }
+            .vocab-grid { grid-template-columns:1fr; }
+            .nav .logo { font-size:18px; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- ==================== 导航栏 ==================== -->
+<nav class="nav">
+    <div class="logo">🎵 听见中国</div>
+    <div class="nav-links">
+        <a onclick="window.scrollTo({top:0,behavior:'smooth'})">首页</a>
+        <a onclick="scrollToSection('map')">旅行地图</a>
+        <a onclick="scrollToSection('beijing')">课程单元</a>
+        <a href="#">创作工坊</a>
+    </div>
+</nav>
+
+<!-- ==================== 首屏 Hero ==================== -->
+<header class="hero">
+    <h1>跟着中文歌去旅行</h1>
+    <p class="subtitle">戴上耳机，用音乐丈量中国大地</p>
+    <div class="badge-row">
+        <span class="badge">🎯 HSK 4 级</span>
+        <span class="badge">📚 5 个单元 · 10 课时</span>
+        <span class="badge">🎶 学中文 · 唱中文</span>
+        <span class="badge">🌏 文化探索</span>
+    </div>
+    <button class="btn-hero" onclick="scrollToSection('map')">✨ 立即出发</button>
+</header>
+
+<!-- ==================== 旅行地图 ==================== -->
+<section id="map" class="section">
+    <div class="section-header">
+        <h2>🗺️ 你的旅行地图</h2>
+        <p style="color:var(--muted);margin-top:8px;">每一首歌都是一个目的地。点击城市卡片，开启音乐文化探索之旅。</p>
+        <span class="tag">共 5 站 · 跨越南北</span>
+    </div>
+
+    <div class="cards-grid">
+        <!-- 1. 北京 -->
+        <div class="city-card card--bj" onclick="scrollToSection('beijing')">
+            <div class="card-icon">🏮</div>
+            <div class="card-city">北京</div>
+            <div class="card-song">《北京欢迎你》</div>
+            <div class="card-desc">感受古都的热情与包容</div>
+            <span class="card-badge">⭐⭐⭐ · 热情好客</span>
+        </div>
+
+        <!-- 2. 成都 -->
+        <div class="city-card card--cd" onclick="scrollToSection('chengdu')">
+            <div class="card-icon">🐼</div>
+            <div class="card-city">成都</div>
+            <div class="card-song">《成都》</div>
+            <div class="card-desc">在街头小酒馆里感受慢生活</div>
+            <span class="card-badge">⭐⭐ · 悠闲浪漫</span>
+        </div>
+
+        <!-- 3. 厦门 -->
+        <div class="city-card card--xm" onclick="scrollToSection('xiamen')">
+            <div class="card-icon">🌊</div>
+            <div class="card-city">厦门</div>
+            <div class="card-song">《外婆的澎湖湾》</div>
+            <div class="card-desc">阳光、沙滩与纯真的童年回忆</div>
+            <span class="card-badge">⭐ · 童年回忆</span>
+        </div>
+
+        <!-- 4. 云南 NEW -->
+        <div class="city-card card--yn" onclick="scrollToSection('yunnan')">
+            <div class="card-icon">🦚</div>
+            <div class="card-city">云南</div>
+            <div class="card-song">《彩云之南》</div>
+            <div class="card-desc">彩云之南，孔雀的故乡</div>
+            <span class="card-badge">⭐⭐ · 民族风情</span>
+        </div>
+
+        <!-- 5. 成长之旅 -->
+        <div class="city-card card--gr" onclick="scrollToSection('chengzhang')">
+            <div class="card-icon">🪽</div>
+            <div class="card-city">成长之旅</div>
+            <div class="card-song">《隐形的翅膀》</div>
+            <div class="card-desc">学习怎样说自己的梦想和勇气</div>
+            <span class="card-badge">⭐⭐⭐ · 梦想勇气</span>
+        </div>
+    </div>
+</section>
+
+<!-- ==================== 详情内容区 ==================== -->
+
+<!-- ========== 第一单元：北京 ========== -->
+<section id="beijing" class="content-section">
+    <div class="section-header">
+        <h2>🏮 第一单元 · 北京：开放与包容</h2>
+        <span class="tag">难度：⭐⭐⭐ | 关键词：欢迎、朋友、大门、开放 | 课时：2 × 90分钟</span>
+    </div>
+    <div class="detail-box">
+
+        <h3>📖 城市故事</h3>
+        <p>北京是中国的首都，有古老的故宫、长城，也有现代化的高楼大厦。中国人非常热情，用"我家大门常打开"来表达欢迎全世界朋友的诚意。《北京欢迎你》是2008年北京奥运会的主题歌，唱出了中国人开放、自信的精神。</p>
+
+        <!-- 🎬 北京风光视频 -->
+        <div class="video-wrapper">
+            <video controls preload="metadata" poster="media/sun.png">
+                <source src="https://gitee.com/xiyumu/resource/raw/master/beijing_scenery.mp4" type="video/mp4">
+                您的浏览器不支持视频播放
+            </video>
+            <div class="video-caption">🎬 北京城市风光 — 故宫、长城与现代化的天际线</div>
+        </div>
+
+        <!-- 🎵 歌曲音频播放器 -->
+        <div class="audio-player">
+            <span class="audio-icon">🎵</span>
+            <audio controls preload="metadata">
+                <source src="https://gitee.com/xiyumu/resource/raw/master/beijing_song.mp3" type="audio/mpeg">
+                您的浏览器不支持音频播放
+            </audio>
+            <div class="audio-label">🎶 群星 — 《北京欢迎你》· 2008年北京奥运会主题歌 · 点击播放边听边学</div>
+        </div>
+
+        <!-- 🖼️ 主题意象图 -->
+        <h3>🎨 涂鸦素材（北京欢迎你）</h3>
+        <div class="image-row">
+            <div class="img-card">
+                <img src="https://gitee.com/xiyumu/resource/raw/master/sun.png" alt="中式大门" loading="lazy">
+                <div class="img-label">🏮 中式大门 — 开放迎客</div>
+            </div>
+            <div class="img-card">
+                <img src="https://gitee.com/xiyumu/resource/raw/master/gate.png" alt="太阳" loading="lazy">
+                <div class="img-label">☀️ 太阳 — 朝气活力</div>
+            </div>
+            <div class="img-card">
+                <img src="https://gitee.com/xiyumu/resource/raw/master/embrace.png" alt="拥抱" loading="lazy">
+                <div class="img-label">🤗 拥抱 — 热情友谊</div>
+            </div>
+            <div class="img-card">
+                <img src="https://gitee.com/xiyumu/resource/raw/master/tea.png" alt="茶" loading="lazy">
+                <div class="img-label">🍵 茶 — 中国文化之礼</div>
+            </div>
+        </div>
+
+        <h3>🎶 经典歌词赏析</h3>
+        <div class="lyrics-box">
+            北京欢迎你，为你开天辟地<br>
+            流动中的魅力充满着朝气<br>
+            北京欢迎你，在太阳下分享呼吸<br>
+            在黄土地刷新成绩<br>
+            <br>
+            北京欢迎你，像音乐感动你<br>
+            让我们都加油去超越自己<br>
+            北京欢迎你，有梦想谁都了不起<br>
+            有勇气就会有奇迹
+        </div>
+        <div class="culture-note">
+            <strong>🎓 文化解读：</strong>"开天辟地"源自中国神话（盘古开天地），在这里象征<strong>创造无限可能</strong>；"有梦想谁都了不起，有勇气就会有奇迹"是整首歌最核心的句子——它告诉每一个普通人：<strong>梦想不分大小，勇气创造奇迹</strong>。这首歌传递的是<strong>自信、开放、人人皆可成就梦想</strong>的中国精神。
+        </div>
+
+        <h3>📝 重点词汇学习</h3>
+        <div class="vocab-grid">
+            <div class="vocab-item">
+                <span class="zh">梦想</span> <span class="level level-hsk4">HSK4</span>
+                <span class="py">mèng xiǎng</span>
+                <span class="en">dream / aspiration</span>
+            </div>
+            <div class="vocab-item">
+                <span class="zh">勇气</span> <span class="level level-hsk5">HSK5</span>
+                <span class="py">yǒng qì</span>
+                <span class="en">courage / bravery</span>
+            </div>
+            <div class="vocab-item">
+                <span class="zh">奇迹</span> <span class="level level-hsk5">HSK5</span>
+                <span class="py">qí jì</span>
+                <span class="en">miracle / wonder</span>
+            </div>
+            <div class="vocab-item">
+                <span class="zh">超越</span> <span class="level level-hsk5">HSK5</span>
+                <span class="py">chāo yuè</span>
+                <span class="en">to surpass / transcend</span>
+            </div>
+            <div class="vocab-item">
+                <span class="zh">感动</span> <span class="level level-hsk4">HSK4</span>
+                <span class="py">gǎn dòng</span>
+                <span class="en">to move (emotionally)</span>
+            </div>
+            <div class="vocab-item">
+                <span class="zh">加油</span> <span class="level level-hsk3">HSK3</span>
+                <span class="py">jiā yóu</span>
+                <span class="en">to cheer on / go for it</span>
+            </div>
+            <div class="vocab-item">
+                <span class="zh">了不起</span> <span class="level level-hsk4">HSK4</span>
+                <span class="py">liǎo bu qǐ</span>
+                <span class="en">amazing / terrific</span>
+            </div>
+            <div class="vocab-item">
+                <span class="zh">分享</span> <span class="level level-hsk5">HSK5</span>
+                <span class="py">fēn xiǎng</span>
+                <span class="en">to share</span>
+            </div>
+            <div class="vocab-item">
+                <span class="zh">流动</span> <span class="level level-hsk5">HSK5</span>
+                <span class="py">liú dòng</span>
+                <span class="en">to flow / flowing</span>
+            </div>
+            <div class="vocab-item">
+                <span class="zh">魅力</span> <span class="level level-hsk5">HSK5</span>
+                <span class="py">mèi lì</span>
+                <span class="en">charm / charisma</span>
+            </div>
+        </div>
+
+        <h3>🧩 语法加油站</h3>
+        <div class="grammar-card">
+            <div class="pattern">📌 句式一：「让 + 人 + 都 + 动词短语」</div>
+            <div class="meaning">号召大家一起做某事。"Let's all do something together."</div>
+            <div class="example">💬 <strong>让我们都</strong>加油去超越自己。</div>
+        </div>
+        <div class="grammar-card">
+            <div class="pattern">📌 句式二：「有 A 就有 B」</div>
+            <div class="meaning">表示条件与结果的紧密关系。If you have A, then B will happen.</div>
+            <div class="example">💬 有梦想谁都了不起，<strong>有勇气就会有</strong>奇迹。</div>
+        </div>
+        <div class="grammar-card">
+            <div class="pattern">📌 句式三：「谁都……」</div>
+            <div class="meaning">"谁"在这里不表示疑问，而是表示"任何人"（anyone）。"谁都" = 每个人。</div>
+            <div class="example">💬 有梦想<strong>谁都</strong>了不起 = 只要有梦想，任何人都了不起。</div>
+        </div>
+
+        <h3>✍️ 微练习（选做）</h3>
+        <p style="font-size:14px;color:var(--muted);">
+            ① 填空：有梦想谁都 ______，有勇气就会有 ______。<br>
+            ② 改写："让我们都加油去超越自己" → 用"谁都"改写：________________。<br>
+            ③ 判断："有梦想谁都了不起"的意思是"只有特别的人才能实现梦想"。（ 对 / 错 ）
+        </p>
+
+        <div class="task-callout">
+            <span class="task-emoji">🎨</span>
+            <div>
+                <h4>单元任务：设计"中国欢迎卡"</h4>
+                <p>为《中国文化手册》制作封面卡片，用汉语写下欢迎语，配上插图。</p>
+                <p class="steps">
+                    📋 步骤：① 用短句回答"你用什么欢迎朋友？" →
+                    ② 写一句固定句式"______ 欢迎你！______ 为你 ______。" →
+                    ③ 选择图标装饰（灯笼/茶杯/太阳/笑脸/城市） →
+                    ④ 小组互评：内容 ★ 书写 ★ 设计 ★
+                </p>
+            </div>
+        </div>
+
+        <a href="#map" class="back-top" onclick="event.preventDefault();scrollToSection('map')">↑ 返回旅行地图</a>
+    </div>
+</section>
+
+<!-- ========== 第二单元：成都 ========== -->
+<section id="chengdu" class="content-section">
+    <div class="section-header">
+        <h2>🐼 第二单元 · 成都：悠闲与浪漫</h2>
+        <span class="tag">难度：⭐⭐ | 关键词：小酒馆、玉林路、街头、挽留 | 课时：2 × 90分钟</span>
+    </div>
+    <div class="detail-box">
+
+        <h3>📖 城市故事</h3>
+        <p>成都是四川省的省会，以"慢生活"著称。这里有大熊猫基地、美味的火锅、热闹的茶馆和悠闲的街头。赵雷的《成都》唱出了这座城市独特的温柔与浪漫——在夜晚的街头慢慢走，感受当下的美好。</p>
+
+        <h3>🎶 经典歌词赏析</h3>
+        <div class="lyrics-box">
+            让我掉下眼泪的，不止昨夜的酒<br>
+            让我依依不舍的，不止你的温柔<br>
+            余路还要走多久，你攥着我的手<br>
+            让我感到为难的，是挣扎的自由<br>
+            <br>
+            和我在成都的街头走一走，喔……<br>
+            直到所有的灯都熄灭了也不停留<br>
+            你会挽着我的衣袖，我会把手揣进裤兜<br>
+            走到玉林路的尽头，坐在小酒馆的门口
+        </div>
+        <div class="culture-note">
+            <strong>🎓 文化解读：</strong>玉林路是成都一条真实存在的街道，以酒吧和文艺小店闻名。"挽着衣袖""把手揣进裤兜"这些动作画面感极强，展现了成都人<strong>悠闲、不赶时间</strong>的生活态度。歌词中的"自由"与"挽留"，传递出一种温柔的情感张力。
+        </div>
+
+        <h3>📝 重点词汇学习</h3>
+        <div class="vocab-grid">
+            <div class="vocab-item">
+                <span class="zh">街头</span> <span class="level level-hsk3">HSK3</span>
+                <span class="py">jiē tóu</span>
+                <span class="en">street / street corner</span>
+            </div>
+            <div class="vocab-item">
+                <span class="zh">挽留</span> <span class="level level-hsk5">HSK5</span>
+                <span class="py">wǎn liú</span>
+                <span class="en">to urge to stay / detain</span>
+            </div>
+            <div class="vocab-item">
+                <span class="zh">自由</span> <span class="level level-hsk3">HSK3</span>
+                <span class="py">zì yóu</span>
+                <span class="en">freedom / free</span>
+            </div>
+            <div class="vocab-item">
+                <span class="zh">温柔</span> <span class="level level-hsk4">HSK4</span>
+                <span class="py">wēn róu</span>
+                <span class="en">gentle / tender</span>
+            </div>
+            <div class="vocab-item">
+                <span class="zh">熄灭</span> <span class="level level-hsk5">HSK5</span>
+                <span class="py">xī miè</span>
+                <span class="en">to go out (light/fire)</span>
+            </div>
+            <div class="vocab-item">
+                <span class="zh">停留</span> <span class="level level-hsk4">HSK4</span>
+                <span class="py">tíng liú</span>
+                <span class="en">to stay / stop over</span>
+            </div>
+            <div class="vocab-item">
+                <span class="zh">衣袖</span> <span class="level level-hsk5">HSK5</span>
+                <span class="py">yī xiù</span>
+                <span class="en">sleeve</span>
+            </div>
+            <div class="vocab-item">
+                <span class="zh">挣扎</span> <span class="level level-hsk5">HSK5</span>
+                <span class="py">zhēng zhá</span>
+                <span class="en">to struggle / wrestle with</span>
+            </div>
+        </div>
+
+        <h3>🧩 语法加油站</h3>
+        <div class="grammar-card">
+            <div class="pattern">📌 句式：「让 + 人 + 感到 + 形容词」</div>
+            <div class="meaning">用来表达某事物给人的感受。To make someone feel...</div>
+            <div class="example">💬 让我感到为难的，是挣扎的自由。→ 这首歌<strong>让我感到</strong>很温暖。</div>
+        </div>
+        <div class="grammar-card">
+            <div class="pattern">📌 句式：「不止……，不止……」</div>
+            <div class="meaning">"不止" = 不仅仅是，用来列举多个原因。Not only... not only...</div>
+            <div class="example">💬 让我掉下眼泪的，<strong>不止</strong>昨夜的酒，<strong>不止</strong>你的温柔。</div>
+        </div>
+
+        <div class="task-callout">
+            <span class="task-emoji">🗺️</span>
+            <div>
+                <h4>单元任务：绘制成都城市漫步路线图</h4>
+                <p>画一张从玉林路到小酒馆的步行路线图，标注沿途的店铺、风景，用中文写简短的介绍。</p>
+                <p class="steps">
+                    📋 步骤：① 在地图上找到玉林路 → ② 标注3-5个"值得停留"的地点 →
+                    ③ 用"走到……的尽头，坐在……的门口"句式写路线说明 →
+                    ④ 向同学展示路线，说说你为什么选择这些地点
+                </p>
+            </div>
+        </div>
+
+        <a href="#map" class="back-top" onclick="event.preventDefault();scrollToSection('map')">↑ 返回旅行地图</a>
+    </div>
+</section>
+
+<!-- ========== 第三单元：厦门 ========== -->
+<section id="xiamen" class="content-section">
+    <div class="section-header">
+        <h2>🌊 第三单元 · 厦门：童年与回忆</h2>
+        <span class="tag">难度：⭐ | 关键词：沙滩、脚印、澎湖湾、童年 | 课时：2 × 90分钟</span>
+    </div>
+    <div class="detail-box">
+
+        <h3>📖 城市故事</h3>
+        <p>厦门是一座美丽的海滨城市，位于福建省，对面就是台湾的澎湖列岛。《外婆的澎湖湾》虽然歌名指的是澎湖，但它描绘的南方海岛风情——阳光、沙滩、海浪、仙人掌——与厦门的气质完美契合。这首歌充满了童年的纯真与温暖的回忆。</p>
+
+        <h3>🎶 经典歌词赏析</h3>
+        <div class="lyrics-box">
+            晚风轻拂澎湖湾，白浪逐沙滩<br>
+            没有椰林缀斜阳，只是一片海蓝蓝<br>
+            坐在门前的矮墙上一遍遍幻想<br>
+            也是黄昏的沙滩上，有着脚印两对半<br>
+            <br>
+            澎湖湾，澎湖湾，外婆的澎湖湾<br>
+            有我许多的童年幻想<br>
+            阳光、沙滩、海浪、仙人掌<br>
+            还有一位老船长
+        </div>
+        <div class="culture-note">
+            <strong>🎓 文化解读：</strong>"晚风轻拂""白浪逐沙滩"用简洁的语言勾勒出一幅海边黄昏的画面。"脚印两对半"暗示外婆牵着孩子的手一起散步——"两对半"=外婆的脚印+孩子的脚印（半个代表小孩的小脚印）。这首歌教会我们，<strong>最简单的画面里藏着最深的感情</strong>。
+        </div>
+
+        <h3>📝 重点词汇学习</h3>
+        <div class="vocab-grid">
+            <div class="vocab-item">
+                <span class="zh">轻拂</span> <span class="level level-hsk5">HSK5</span>
+                <span class="py">qīng fú</span>
+                <span class="en">to gently brush / stroke</span>
+            </div>
+            <div class="vocab-item">
+                <span class="zh">脚印</span> <span class="level level-hsk3">HSK3</span>
+                <span class="py">jiǎo yìn</span>
+                <span class="en">footprint</span>
+            </div>
+            <div class="vocab-item">
+                <span class="zh">黄昏</span> <span class="level level-hsk4">HSK4</span>
+                <span class="py">huáng hūn</span>
+                <span class="en">dusk / twilight</span>
+            </div>
+            <div class="vocab-item">
+                <span class="zh">沙滩</span> <span class="level level-hsk4">HSK4</span>
+                <span class="py">shā tān</span>
+                <span class="en">sandy beach</span>
+            </div>
+            <div class="vocab-item">
+                <span class="zh">幻想</span> <span class="level level-hsk4">HSK4</span>
+                <span class="py">huàn xiǎng</span>
+                <span class="en">fantasy / imagination</span>
+            </div>
+            <div class="vocab-item">
+                <span class="zh">童年</span> <span class="level level-hsk4">HSK4</span>
+                <span class="py">tóng nián</span>
+                <span class="en">childhood</span>
+            </div>
+            <div class="vocab-item">
+                <span class="zh">斜阳</span> <span class="level level-hsk5">HSK5</span>
+                <span class="py">xié yáng</span>
+                <span class="en">setting sun</span>
+            </div>
+            <div class="vocab-item">
+                <span class="zh">船长</span> <span class="level level-hsk4">HSK4</span>
+                <span class="py">chuán zhǎng</span>
+                <span class="en">captain (of a ship)</span>
+            </div>
+        </div>
+
+        <h3>🧩 语法加油站</h3>
+        <div class="grammar-card">
+            <div class="pattern">📌 句式：「有着 + 名词短语」</div>
+            <div class="meaning">一种书面化的表达，相当于"有"，但更优美。"有着" is a more literary way to say "有" (have).</div>
+            <div class="example">💬 有着脚印两对半 → 我的家乡<strong>有着</strong>美丽的风景和热情的人们。</div>
+        </div>
+
+        <div class="task-callout">
+            <span class="task-emoji">📦</span>
+            <div>
+                <h4>单元任务：制作"童年记忆盒"</h4>
+                <p>收集或画出代表你童年记忆的3-5件物品（照片/玩具/零食），用中文写标签，向同学分享你的童年故事。</p>
+                <p class="steps">
+                    📋 步骤：① 用"阳光、______、______、______"的格式列出你的童年关键词 →
+                    ② 选一件最重要的东西，用"有着……"句式写一句话 →
+                    ③ 制作一个实体或电子"记忆盒"（可以是纸盒或PPT） →
+                    ④ 3分钟小组分享
+                </p>
+            </div>
+        </div>
+
+        <a href="#map" class="back-top" onclick="event.preventDefault();scrollToSection('map')">↑ 返回旅行地图</a>
+    </div>
+</section>
+
+<!-- ========== 第四单元：云南 ========== -->
+<section id="yunnan" class="content-section">
+    <div class="section-header">
+        <h2>🦚 第四单元 · 云南：彩云之南</h2>
+        <span class="tag">难度：⭐⭐ | 关键词：彩云、孔雀、雪山、远方 | 课时：2 × 90分钟</span>
+    </div>
+    <div class="detail-box">
+
+        <h3>📖 城市故事</h3>
+        <p>云南位于中国西南部，名字意为"彩云之南"，是中国少数民族最多的省份。这里有丽江古城、大理洱海、玉龙雪山和西双版纳的热带雨林。徐千雅的《彩云之南》把云南的美景一一唱出——孔雀飞去、玉龙雪山、秀色丽江……让人仿佛置身彩云之间。</p>
+
+        <h3>🎶 经典歌词赏析</h3>
+        <div class="lyrics-box">
+            彩云之南，我心的方向<br>
+            孔雀飞去，回忆悠长<br>
+            玉龙雪山，闪耀着银光<br>
+            秀色丽江，人在路上<br>
+            <br>
+            彩云之南，归去的地方<br>
+            往事芬芳，随风飘扬<br>
+            蝴蝶泉边，歌声在流淌<br>
+            泸沽湖畔，心仍荡漾<br>
+            <br>
+            记得你，记得我，记得我们走过的地方<br>
+            山和水，云和月，都在诉说着地久天长
+        </div>
+        <div class="culture-note">
+            <strong>🎓 文化解读：</strong>"彩云之南"就是云南的名字来源。歌词中提到了云南最著名的几个地方：<strong>玉龙雪山</strong>（丽江的雪山）、<strong>蝴蝶泉</strong>（大理的爱情圣地）、<strong>泸沽湖</strong>（摩梭人的故乡）。"孔雀飞去"既指云南的孔雀，也象征着<strong>向往远方、追求美好</strong>的心情。这首歌用优美的意象串起了云南的山、水、云、月。
+        </div>
+
+        <h3>📝 重点词汇学习</h3>
+        <div class="vocab-grid">
+            <div class="vocab-item">
+                <span class="zh">方向</span> <span class="level level-hsk3">HSK3</span>
+                <span class="py">fāng xiàng</span>
+                <span class="en">direction / orientation</span>
+            </div>
+            <div class="vocab-item">
+                <span class="zh">回忆</span> <span class="level level-hsk3">HSK3</span>
+                <span class="py">huí yì</span>
+                <span class="en">memory / recollection</span>
+            </div>
+            <div class="vocab-item">
+                <span class="zh">悠长</span> <span class="level level-hsk5">HSK5</span>
+                <span class="py">yōu cháng</span>
+                <span class="en">long / prolonged</span>
+            </div>
+            <div class="vocab-item">
+                <span class="zh">闪耀</span> <span class="level level-hsk5">HSK5</span>
+                <span class="py">shǎn yào</span>
+                <span class="en">to glitter / shine</span>
+            </div>
+            <div class="vocab-item">
+                <span class="zh">芬芳</span> <span class="level level-hsk5">HSK5</span>
+                <span class="py">fēn fāng</span>
+                <span class="en">fragrant / sweet-smelling</span>
+            </div>
+            <div class="vocab-item">
+                <span class="zh">飘扬</span> <span class="level level-hsk5">HSK5</span>
+                <span class="py">piāo yáng</span>
+                <span class="en">to wave / flutter in the wind</span>
+            </div>
+            <div class="vocab-item">
+                <span class="zh">流淌</span> <span class="level level-hsk5">HSK5</span>
+                <span class="py">liú tǎng</span>
+                <span class="en">to flow (liquid/sound)</span>
+            </div>
+            <div class="vocab-item">
+                <span class="zh">荡漾</span> <span class="level level-hsk5">HSK5</span>
+                <span class="py">dàng yàng</span>
+                <span class="en">to ripple / undulate</span>
+            </div>
+            <div class="vocab-item">
+                <span class="zh">诉说</span> <span class="level level-hsk5">HSK5</span>
+                <span class="py">sù shuō</span>
+                <span class="en">to tell / recount</span>
+            </div>
+            <div class="vocab-item">
+                <span class="zh">地久天长</span> <span class="level level-hsk5">HSK5</span>
+                <span class="py">dì jiǔ tiān cháng</span>
+                <span class="en">everlasting / enduring as the universe</span>
+            </div>
+        </div>
+
+        <h3>🧩 语法加油站</h3>
+        <div class="grammar-card">
+            <div class="pattern">📌 句式：「A 在 B（地方）」表示存在或动作发生的地点</div>
+            <div class="meaning">"在" + 地点名词，表示人或事物所在的位置。Indicates location.</div>
+            <div class="example">💬 蝴蝶泉边，歌声<strong>在</strong>流淌 → 泸沽湖畔，心仍<strong>在</strong>荡漾 → 秀色丽江，人<strong>在</strong>路上。</div>
+        </div>
+        <div class="grammar-card">
+            <div class="pattern">📌 四字格：山和水、云和月</div>
+            <div class="meaning">用"和"连接两个名词，形成节奏感强的四字短语。常用于诗歌和歌曲中。</div>
+            <div class="example">💬 <strong>山和水</strong>、<strong>云和月</strong> → 天和地、花和草、风和你。</div>
+        </div>
+
+        <div class="task-callout">
+            <span class="task-emoji">📸</span>
+            <div>
+                <h4>单元任务：策划云南旅行明信片</h4>
+                <p>选一个云南的景点（丽江、大理、泸沽湖等），设计一张旅行明信片，背面用中文写一段风景介绍。</p>
+                <p class="steps">
+                    📋 步骤：① 从歌词中选一个地点（玉龙雪山/蝴蝶泉/泸沽湖/丽江） →
+                    ② 用"______在______"句式写一句画面描写 →
+                    ③ 用"______和______"的四字格写一句总结语 →
+                    ④ 画一张明信片正面图，背面写中文，向同学展示
+                </p>
+            </div>
+        </div>
+
+        <a href="#map" class="back-top" onclick="event.preventDefault();scrollToSection('map')">↑ 返回旅行地图</a>
+    </div>
+</section>
+
+<!-- ========== 第五单元：成长之旅 ========== -->
+<section id="chengzhang" class="content-section">
+    <div class="section-header">
+        <h2>🪽 第五单元 · 成长：梦想与勇气</h2>
+        <span class="tag">难度：⭐⭐⭐ | 关键词：梦想、勇气、翅膀、飞翔 | 课时：2 × 90分钟</span>
+    </div>
+    <div class="detail-box">
+
+        <h3>📖 单元故事</h3>
+        <p>这是我们的最后一站——不是某一个城市，而是你的<strong>内心之旅</strong>。张韶涵的《隐形的翅膀》是中国最经典的一首励志歌曲，歌词中的"隐形的翅膀"是一个比喻：每个人都有一双看不见的翅膀，那就是你的<strong>梦想和勇气</strong>。学到这里，你已经能用中文表达自己的想法了。让我们学会<strong>怎样说出自己的梦想和勇气</strong>。</p>
+
+        <h3>🎶 经典歌词赏析</h3>
+        <div class="lyrics-box">
+            每一次，都在徘徊孤单中坚强<br>
+            每一次，就算很受伤也不闪泪光<br>
+            我知道，我一直有双隐形的翅膀<br>
+            带我飞，飞过绝望<br>
+            <br>
+            不去想，他们拥有美丽的太阳<br>
+            我看见，每天的夕阳也会有变化<br>
+            我知道，我一直有双隐形的翅膀<br>
+            带我飞，给我希望<br>
+            <br>
+            我终于看到，所有梦想都开花<br>
+            追逐的年轻，歌声多嘹亮<br>
+            我终于翱翔，用心凝望不害怕<br>
+            哪里会有风，就飞多远吧
+        </div>
+        <div class="culture-note">
+            <strong>🎓 文化解读：</strong>"隐形的翅膀"是一个绝妙的<strong>比喻</strong>——它看不见、摸不着，但能带你飞翔。这双翅膀就是每个人内心的<strong>梦想、勇气和希望</strong>。"所有梦想都开花"意思是只要坚持，梦想就会像花朵一样绽放。"哪里会有风，就飞多远吧"告诉我们：<strong>困难不是阻碍，而是让你飞得更高的力量</strong>。这首歌鼓励每一个普通人——你不需要羡慕别人的"太阳"，你的"夕阳"也每天在变化、在进步。
+        </div>
+
+        <h3>📝 重点词汇学习</h3>
+        <div class="vocab-grid">
+            <div class="vocab-item">
+                <span class="zh">梦想</span> <span class="level level-hsk4">HSK4</span>
+                <span class="py">mèng xiǎng</span>
+                <span class="en">dream / aspiration</span>
+            </div>
+            <div class="vocab-item">
+                <span class="zh">勇气</span> <span class="level level-hsk5">HSK5</span>
+                <span class="py">yǒng qì</span>
+                <span class="en">courage</span>
+            </div>
+            <div class="vocab-item">
+                <span class="zh">翅膀</span> <span class="level level-hsk5">HSK5</span>
+                <span class="py">chì bǎng</span>
+                <span class="en">wing</span>
+            </div>
+            <div class="vocab-item">
+                <span class="zh">坚强</span> <span class="level level-hsk4">HSK4</span>
+                <span class="py">jiān qiáng</span>
+                <span class="en">strong / firm</span>
+            </div>
+            <div class="vocab-item">
+                <span class="zh">希望</span> <span class="level level-hsk3">HSK3</span>
+                <span class="py">xī wàng</span>
+                <span class="en">hope / wish</span>
+            </div>
+            <div class="vocab-item">
+                <span class="zh">绝望</span> <span class="level level-hsk5">HSK5</span>
+                <span class="py">jué wàng</span>
+                <span class="en">despair / hopelessness</span>
+            </div>
+            <div class="vocab-item">
+                <span class="zh">翱翔</span> <span class="level level-hsk5">HSK5</span>
+                <span class="py">áo xiáng</span>
+                <span class="en">to soar / hover in the sky</span>
+            </div>
+            <div class="vocab-item">
+                <span class="zh">凝望</span> <span class="level level-hsk5">HSK5</span>
+                <span class="py">níng wàng</span>
+                <span class="en">to gaze fixedly</span>
+            </div>
+            <div class="vocab-item">
+                <span class="zh">嘹亮</span> <span class="level level-hsk5">HSK5</span>
+                <span class="py">liáo liàng</span>
+                <span class="en">loud and clear (voice)</span>
+            </div>
+            <div class="vocab-item">
+                <span class="zh">徘徊</span> <span class="level level-hsk5">HSK5</span>
+                <span class="py">pái huái</span>
+                <span class="en">to wander / pace back and forth</span>
+            </div>
+        </div>
+
+        <h3>🧩 语法加油站</h3>
+        <div class="grammar-card">
+            <div class="pattern">📌 句式：「每一次……都……」</div>
+            <div class="meaning">表示"每次……的时候，结果都是……"。Every time X, the result is Y.</div>
+            <div class="example">💬 <strong>每一次</strong>都在徘徊孤单中<strong>坚强</strong> → 每一次遇到困难，我都告诉自己不要放弃。</div>
+        </div>
+        <div class="grammar-card">
+            <div class="pattern">📌 比喻修辞：「隐形的翅膀」= 梦想和勇气</div>
+            <div class="meaning">中文中常用具体事物比喻抽象概念。Metaphor: "invisible wings" = dreams and courage.</div>
+            <div class="example">💬 我的<strong>隐形的翅膀</strong>就是我的梦想和勇气。→ 知识是我们的翅膀，带我们飞向未来。</div>
+        </div>
+        <div class="grammar-card">
+            <div class="pattern">📌 句式：「我终于 + 动词短语」</div>
+            <div class="meaning">表示经过努力后实现了目标。"I finally..." — expresses accomplishment after effort.</div>
+            <div class="example">💬 <strong>我终于</strong>看到，所有梦想都开花 → <strong>我终于</strong>学会了用中文说自己的梦想。</div>
+        </div>
+
+        <div class="task-callout">
+            <span class="task-emoji">🌟</span>
+            <div>
+                <h4>单元任务："我的隐形翅膀"——说出你的梦想和勇气</h4>
+                <p>这是课程的总结项目。用学到的词汇和句式，制作一张"梦想勇气卡"：你的梦想是什么？你的"隐形翅膀"是什么？你怎样用勇气面对困难？</p>
+                <p class="steps">
+                    📋 步骤：① 用"我的梦想是……"写1-2句介绍你的梦想 →
+                    ② 用"我的隐形翅膀是……"写一个比喻句（如：朋友的支持 / 家人的鼓励 / 自己的坚持） →
+                    ③ 用"每一次……我都……"句式写一句你克服困难的故事 →
+                    ④ 用"我终于……"句式写一句你为自己的进步感到骄傲的话 →
+                    ⑤ 装饰卡片，在全班面前做3分钟的"我的梦想与勇气"主题演讲
+                </p>
+            </div>
+        </div>
+
+        <a href="#map" class="back-top" onclick="event.preventDefault();scrollToSection('map')">↑ 返回旅行地图</a>
+    </div>
+</section>
+
+<!-- ==================== 页脚 ==================== -->
+<footer class="footer">
+    <p>🎵 <strong>听见中国</strong> · 跟着中文歌去旅行 | HSK4 级文化探索课程</p>
+    <p style="margin-top:6px;">5 单元 · 10 课时 · 音乐 + 语言 + 文化三维融合 | 教师备课资源 · 学生自主学习</p>
+    <p style="margin-top:12px;font-size:12px;">课程设计遵循"可视化、项目式、支架式"原则 | 适用场景：夏令营 / 兴趣班 / 文化体验课 / 自学路径</p>
+</footer>
+
+<!-- ==================== JavaScript ==================== -->
+<script>
+    /**
+     * 核心交互：点击卡片 → 平滑滚动到对应详情区 → 播放浮现动画
+     * @param {string} sectionId - 目标 section 的 id
+     */
+    function scrollToSection(sectionId) {
+        const section = document.getElementById(sectionId);
+        if (!section) return;
+
+        // 1. 清除所有 content-section 的可见状态（保持页面整洁）
+        document.querySelectorAll('.content-section').forEach(el => {
+            el.classList.remove('content-visible');
+        });
+
+        // 2. 平滑滚动到目标区域
+        section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+        // 3. 滚动到位后触发浮现动画
+        setTimeout(() => {
+            section.classList.add('content-visible');
+        }, 350);
+    }
+
+    /**
+     * 页面加载时，检查 URL hash，自动跳转到对应 section
+     * 支持直接访问如 index.html#chengdu
+     */
+    window.addEventListener('DOMContentLoaded', () => {
+        const hash = window.location.hash.slice(1); // 去掉 #
+        if (hash) {
+            // 稍等一帧确保所有元素已渲染
+            setTimeout(() => scrollToSection(hash), 200);
+        }
+    });
+
+    /**
+     * 使用 IntersectionObserver 实现滚动到视口时自动浮现
+     * 即使用户手动滚动（而非点击卡片）也能触发动画
+     */
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('content-visible');
+            }
+        });
+    }, { threshold: 0.15, rootMargin: '0px 0px -50px 0px' });
+
+    document.querySelectorAll('.content-section').forEach(section => {
+        observer.observe(section);
+    });
+</script>
+
+</body>
+</html>
